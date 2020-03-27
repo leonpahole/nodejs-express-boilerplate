@@ -1,0 +1,47 @@
+version: '3.7'
+
+services:
+  api:
+    container_name: example_api
+    build:
+      context: .
+      args:
+        - NODE_ENV=development
+        - APP_PORT=${APP_PORT:-4000}
+    ports:
+      - ${EXPOSED_PORT:-4000}:${APP_PORT:-4000}
+      - 9229:9229
+    volumes:
+      - .:/opt/node_app/app:delegated
+      - ./package.json:/opt/node_app/package.json
+      - ./yarn.lock:/opt/node_app/yarn.lock
+      - dist_unused:/opt/node_app/app/dist
+      - modules_unused:/opt/node_app/app/node_modules
+    command: ts-node-dev --respawn src/app.ts
+    depends_on:
+      - db
+    environment:
+      DB_NAME: ${DB_NAME:-example}
+      DB_USERNAME: ${DB_USERNAME:-example}
+      DB_PASSWORD: ${DB_PASSWORD:-example}
+      DB_HOST: ${DB_HOST:-example}
+
+  db:
+    container_name: example_postgres
+    image: postgres
+    environment:
+      POSTGRES_DB: ${DB_NAME:-example}
+      POSTGRES_USER: ${DB_USERNAME:-example}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-example}
+
+  adminer:
+    container_name: example_db_admin
+    image: adminer
+    depends_on:
+      - db
+    ports:
+      - 8080:8080
+
+volumes:
+  dist_unused:
+  modules_unused:

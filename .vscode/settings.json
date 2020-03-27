@@ -1,0 +1,13 @@
+{
+  "[javascript]": {
+    "editor.defaultFormatter": "eg2.tslint",
+    "editor.formatOnSave": true
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll.tslint": true
+  },
+  "tslint.autoFixOnSave": true,
+  "tslint.enable": true,
+  "prettier.singleQuote": true,
+  "prettier.printWidth": 100
+}
