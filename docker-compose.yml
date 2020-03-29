@@ -25,6 +25,7 @@ services:
       DB_USERNAME: ${DB_USERNAME:-example}
       DB_PASSWORD: ${DB_PASSWORD:-example}
       DB_HOST: ${DB_HOST:-example}
+      JWT_SECRET: ${JWT_SECRET:-secret}
 
   db:
     container_name: example_postgres

@@ -5,9 +5,13 @@ import {
   PrimaryKey,
   CreatedAt,
   UpdatedAt,
-  AutoIncrement
+  AutoIncrement,
+  DefaultScope
 } from 'sequelize-typescript';
 
+@DefaultScope(() => ({
+  attributes: { exclude: ['password'] }
+}))
 @Table
 export default class User extends Model<User> {
   @PrimaryKey
@@ -20,6 +24,9 @@ export default class User extends Model<User> {
 
   @Column
   surname!: string;
+
+  @Column
+  password!: string;
 
   @CreatedAt
   @Column

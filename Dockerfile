@@ -13,7 +13,9 @@ WORKDIR /opt/node_app
 USER node
 
 COPY package.json yarn.lock ./
-RUN yarn install --ignore-scripts
+RUN yarn global add node-gyp
+RUN yarn install --ignore-scripts --frozen-lockfile
+RUN npx node-pre-gyp rebuild -C ./node_modules/argon2
 
 ENV PATH /opt/node_app/node_modules/.bin:$PATH
 

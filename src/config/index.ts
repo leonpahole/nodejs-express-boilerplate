@@ -24,5 +24,10 @@ export default {
     password: process.env.DB_PASSWORD,
     host: process.env.DB_HOST,
     dialect: 'postgres'
+  },
+
+  jwt: {
+    secret: process.env.JWT_SECRET,
+    expiration: '6h'
   }
 };

@@ -1,12 +1,29 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import userService from '../../services/user';
 import logger from '../../lib/logger';
-import { celebrate, Joi, errors, Segments } from 'celebrate';
+import { celebrate, Joi, Segments } from 'celebrate';
+import isAuth from '../middleware/isAuth';
+import attachAuthenticatedUser from '../middleware/attachAuthenticatedUser';
 
 const route = Router();
 
 export default (app: Router) => {
   app.use('/users', route);
+
+  route.get(
+    '/me',
+    isAuth,
+    attachAuthenticatedUser,
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const user = await userService.byId(req.authenticatedUser.id);
+        return res.json({ user }).status(200);
+      } catch (e) {
+        logger.error(e);
+        return next(e);
+      }
+    }
+  );
 
   route.get('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -39,20 +56,47 @@ export default (app: Router) => {
   );
 
   route.post(
-    '/',
+    '/register',
     celebrate({
       [Segments.BODY]: Joi.object().keys({
         name: Joi.string()
           .min(4)
           .max(20)
           .required(),
-        surname: Joi.string().required()
+        surname: Joi.string().required(),
+        password: Joi.string()
+          .min(4)
+          .required()
       })
     }),
     async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const user = await userService.create(req.body.name, req.body.surname);
+        const user = await userService.create(req.body.name, req.body.surname, req.body.password);
         return res.json({ user }).status(200);
+      } catch (e) {
+        logger.error(e);
+        return next(e);
+      }
+    }
+  );
+
+  route.post(
+    '/login',
+    celebrate({
+      [Segments.BODY]: Joi.object().keys({
+        name: Joi.string()
+          .min(4)
+          .max(20)
+          .required(),
+        password: Joi.string()
+          .min(4)
+          .required()
+      })
+    }),
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const token = await userService.login(req.body.name, req.body.password);
+        return res.json({ token }).status(200);
       } catch (e) {
         logger.error(e);
         return next(e);
