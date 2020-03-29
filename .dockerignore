@@ -4,6 +4,12 @@ bin
 
 .env
 .env.example
+.env.prod
+.env.prod.example
+build_and_release.env
+build_and_release.env.example
+prod_deploy.env
+prod_deploy.env.example
 
 Dockerfile
 docker-compose*.yml
