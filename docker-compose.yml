@@ -24,7 +24,7 @@ services:
       DB_NAME: ${DB_NAME:-example}
       DB_USERNAME: ${DB_USERNAME:-example}
       DB_PASSWORD: ${DB_PASSWORD:-example}
-      DB_HOST: ${DB_HOST:-example}
+      DB_HOST: ${DB_HOST:-db}
       JWT_SECRET: ${JWT_SECRET:-secret}
 
   db:
