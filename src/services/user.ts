@@ -2,7 +2,7 @@ import User from '../db/models/user';
 import * as argon2 from 'argon2';
 import config from '../config';
 import * as jwt from 'jsonwebtoken';
-import { AuthPayload } from '../lib/interfaces/AuthPayload';
+import { AuthPayload } from '../lib/types/AuthPayload';
 
 export default class UserService {
   public static async all(): Promise<User[]> {

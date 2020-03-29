@@ -1,9 +1,10 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import userService from '../../services/user';
-import logger from '../../lib/logger';
 import { celebrate, Joi, Segments } from 'celebrate';
 import isAuth from '../middleware/isAuth';
 import attachAuthenticatedUser from '../middleware/attachAuthenticatedUser';
+import ApiError from '../../lib/types/ApiError';
+import { HttpStatus } from '../../lib/types/HttpStatus';
 
 const route = Router();
 
@@ -17,10 +18,15 @@ export default (app: Router) => {
     async (req: Request, res: Response, next: NextFunction) => {
       try {
         const user = await userService.byId(req.authenticatedUser.id);
-        return res.json({ user }).status(200);
+
+        if (!user) {
+          return next(new ApiError('User not found', HttpStatus.NOT_FOUND));
+        }
+
+        res.locals.data = user;
+        return next();
       } catch (e) {
-        logger.error(e);
-        return next(e);
+        return next(new ApiError(e.message));
       }
     }
   );
@@ -28,10 +34,11 @@ export default (app: Router) => {
   route.get('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
       const users = await userService.all();
-      return res.json({ users }).status(200);
+
+      res.locals.data = users;
+      return next();
     } catch (e) {
-      logger.info(e);
-      return next(e);
+      return next(new ApiError(e.message));
     }
   });
 
@@ -47,10 +54,15 @@ export default (app: Router) => {
     async (req: Request, res: Response, next: NextFunction) => {
       try {
         const user = await userService.byId(req.params.id);
-        return res.json({ user }).status(200);
+
+        if (!user) {
+          return next(new ApiError('User not found', HttpStatus.NOT_FOUND));
+        }
+
+        res.locals.data = user;
+        return next();
       } catch (e) {
-        logger.error(e);
-        return next(e);
+        return next(new ApiError(e.message));
       }
     }
   );
@@ -72,10 +84,15 @@ export default (app: Router) => {
     async (req: Request, res: Response, next: NextFunction) => {
       try {
         const user = await userService.create(req.body.name, req.body.surname, req.body.password);
-        return res.json({ user }).status(200);
+
+        if (!user) {
+          return next(new ApiError('User registration error'));
+        }
+
+        res.locals.data = user;
+        return next();
       } catch (e) {
-        logger.error(e);
-        return next(e);
+        return next(new ApiError(e.message));
       }
     }
   );
@@ -96,10 +113,15 @@ export default (app: Router) => {
     async (req: Request, res: Response, next: NextFunction) => {
       try {
         const token = await userService.login(req.body.name, req.body.password);
-        return res.json({ token }).status(200);
+
+        if (!token) {
+          return next(new ApiError('Invalid username/password', HttpStatus.UNAUTHORIZED));
+        }
+
+        res.locals.data = token;
+        next();
       } catch (e) {
-        logger.error(e);
-        return next(e);
+        return next(new ApiError(e.message));
       }
     }
   );
@@ -122,10 +144,14 @@ export default (app: Router) => {
     async (req: Request, res: Response, next: NextFunction) => {
       try {
         const user = await userService.update(req.params.id, req.body.name, req.body.surname);
-        return res.json({ user }).status(200);
+
+        if (!user) {
+          return next(new ApiError('User not found', HttpStatus.NOT_FOUND));
+        }
+
+        res.locals.data = user;
       } catch (e) {
-        logger.error(e);
-        return next(e);
+        return next(new ApiError(e.message));
       }
     }
   );
@@ -141,11 +167,16 @@ export default (app: Router) => {
     }),
     async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const user = await userService.delete(req.params.id);
-        return res.json({ status: user > 0 }).status(200);
+        const deletedCount = await userService.delete(req.params.id);
+
+        if (deletedCount === 0) {
+          return next(new ApiError('User not found', HttpStatus.NOT_FOUND));
+        }
+
+        res.locals.data = deletedCount;
+        next();
       } catch (e) {
-        logger.error(e);
-        return next(e);
+        return next(new ApiError(e.message));
       }
     }
   );
