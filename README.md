@@ -20,7 +20,7 @@ Boilerplate I use for Node.js apps. Compiled and adapted from the following sour
 - [ ] Socket.io
 - [x] Middleware
 - [x] Authentication
-- [ ] Error handling with proper HTTP codes
+- [x] Error handling with proper HTTP codes
 - [ ] Fix database connection refused when first starting the app
 
 ## Start developing
