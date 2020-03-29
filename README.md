@@ -18,6 +18,7 @@ Boilerplate I use for Node.js apps. Compiled and adapted from the following sour
 - [ ] Socket.io
 - [ ] Middleware
 - [ ] Authentication
+- [ ] Error handling with proper HTTP codes
 
 ## Start developing
 
@@ -40,3 +41,9 @@ Migrate:
 Seed:
 
 `make seed`
+
+## Add migration
+
+```
+docker-compose exec api npx sequelize-cli migration:create --name add_password_to_users
+```
