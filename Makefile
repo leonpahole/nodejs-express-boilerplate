@@ -1,22 +1,19 @@
-install:
-	docker-compose -f docker-compose.builder.yml run --rm install
-
 build:
 	docker-compose build
 
-dev:
+up:
 	docker-compose up -d
 
-stop:
+down:
 	docker-compose down
 
 clean:
 	docker-compose down -v
-	
+
 logs:
 	docker-compose logs -f api
 
-status:
+ps:
 	docker-compose ps
 
 exec:
@@ -27,3 +24,30 @@ migrate:
 
 seed:
 	docker-compose exec api yarn seed
+
+release:
+	bash ./bin/build_and_release.sh
+
+prod_deploy:
+	bash ./bin/prod_deploy.sh
+
+prod_up:
+	docker-compose -f docker-compose.prod.yml --context production up -d --remove-orphans
+
+prod_down:
+	docker-compose -f docker-compose.prod.yml --context production down
+
+prod_clean:
+	docker-compose -f docker-compose.prod.yml --context production down -v
+
+prod_logs:
+	docker-compose -f docker-compose.prod.yml --context production logs -f api
+
+prod_ps:
+	docker-compose -f docker-compose.prod.yml --context production ps
+
+prod_migrate:
+	COMPOSE_INTERACTIVE_NO_CLI=1 docker-compose -f docker-compose.prod.yml --context production exec api yarn migrate
+
+prod_seed:
+	COMPOSE_INTERACTIVE_NO_CLI=1 docker-compose -f docker-compose.prod.yml --context production exec api yarn seed

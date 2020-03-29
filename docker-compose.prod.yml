@@ -1,0 +1,43 @@
+version: '3.7'
+
+services:
+  api:
+    container_name: example_prod_api
+    image: leonpahole/nodejs-boilerplate
+    env_file: .env.prod
+    ports:
+      - ${EXPOSED_PORT:-4000}:4000
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      DB_NAME: ${DB_NAME}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_HOST: db
+      JWT_SECRET: ${JWT_SECRET}
+
+  db:
+    container_name: example_prod_postgres
+    image: postgres
+    restart: unless-stopped
+    env_file: .env.prod
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+
+  adminer:
+    container_name: example_prod_db_admin
+    image: adminer
+    env_file: .env.prod
+    restart: unless-stopped
+    depends_on:
+      - db
+    ports:
+      - ${ADMINER_PORT:-8080}:8080
+
+volumes:
+  dbdata:

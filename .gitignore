@@ -2,3 +2,6 @@ dist
 node_modules
 
 .env
+.env.prod
+build_and_release.env
+prod_deploy.env
