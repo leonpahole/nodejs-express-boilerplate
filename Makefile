@@ -35,10 +35,10 @@ prod_up:
 	docker-compose --env-file .env.prod -f docker-compose.prod.yml --context production up -d --remove-orphans
 
 prod_down:
-	docker-compose -f docker-compose.prod.yml --context production down
+	docker-compose --env-file .env.prod -f docker-compose.prod.yml --context production down
 
 prod_clean:
-	docker-compose -f docker-compose.prod.yml --context production down -v
+	docker-compose --env-file .env.prod -f docker-compose.prod.yml --context production down -v
 
 prod_logs:
 	docker-compose -f docker-compose.prod.yml --context production logs -f api
