@@ -32,7 +32,7 @@ prod_deploy:
 	bash ./bin/prod_deploy.sh
 
 prod_up:
-	docker-compose -f docker-compose.prod.yml --context production up -d --remove-orphans
+	docker-compose --env-file .env.prod -f docker-compose.prod.yml --context production up -d --remove-orphans
 
 prod_down:
 	docker-compose -f docker-compose.prod.yml --context production down
